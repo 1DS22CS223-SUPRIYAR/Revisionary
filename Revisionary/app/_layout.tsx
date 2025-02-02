@@ -24,16 +24,24 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return null; // Keeps splash screen visible until fonts load
   }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* Launching App with NewVideo Screen */}
+        <Stack.Screen name="screens/newvideo" options={{ title: 'New Video' }} />
+
+        {/* Other Screens */}
+        <Stack.Screen name="index" options={{ title: 'Home' }} />
+        <Stack.Screen name="screens/summary" options={{ title: 'Summary' }} />
+
+        {/* Handle 404 - Not Found */}
+        <Stack.Screen name="+not-found" options={{ title: 'Page Not Found' }} />
       </Stack>
-      <StatusBar style="auto" />
+      
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }

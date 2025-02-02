@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import BottomBar from '../components/bottom_bar'; 
+import { useRouter } from 'expo-router';
 
 const FlashCardPage = () => {
   const navigation = useNavigation();
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [flashcardsGenerated, setFlashcardsGenerated] = useState(false);
+  const router = useRouter();
 
-  const handleGenerateFlashCards = () => {
+  const handleGenerate = () => {
     if (youtubeUrl) {
       setFlashcardsGenerated(true);
       console.log('Generating flashcards for:', youtubeUrl);
+      setYoutubeUrl('');
+      router.push('/screens/summary')
     } else {
       alert('Please enter a valid YouTube URL.');
     }
@@ -33,18 +38,20 @@ const FlashCardPage = () => {
 
       {/* Body */}
       <View style={styles.body}>
+        <View style={styles.text}>
+          <Text size ={24}>Enter YouTube Video URL</Text>
+        </View>
         <View style={styles.inputContainer}>
           <Icon name="youtube" size={24} color="#FF6347" style={styles.youtubeIcon} />
           <TextInput
             style={styles.input}
-            placeholder="Enter YouTube URL"
             value={youtubeUrl}
             onChangeText={setYoutubeUrl}
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleGenerateFlashCards}>
-          <Text style={styles.buttonText}>Generate Flash Cards</Text>
+        <TouchableOpacity style={styles.button} onPress={handleGenerate}>
+          <Text style={styles.buttonText}>GENERATE</Text>
         </TouchableOpacity>
 
         <Image source={require('../assets/generate.jpg')} style={styles.image} />
@@ -59,13 +66,7 @@ const FlashCardPage = () => {
       </View>
 
       {/* Bottom Bar */}
-      <View style={styles.bottomBar}>
-        <Icon name="book" size={28} color="#FF6347" />
-        <Icon name="diamond" size={28} color="#FF6347" />
-        <Icon name="home" size={28} color="#00BFFF" />
-        <Icon name="information-outline" size={28} color="#FF6347" />
-        <Icon name="account" size={28} color="#FF6347" />
-      </View>
+      <BottomBar currentScreen="Home" />
     </View>
   );
 };
@@ -73,7 +74,7 @@ const FlashCardPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5', // New background shade
+    backgroundColor: '#F5F5F5',
   },
   topBar: {
     flexDirection: 'row',
@@ -81,10 +82,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 60,
     paddingHorizontal: 15,
-    backgroundColor: '#6849EF', // Deep purple for the top bar
+    backgroundColor: '#6849EF',
   },
   topBarText: {
-    color: '#FFFFFF', // White text
+    color: '#FFFFFF',
     fontSize: 22,
     fontWeight: 'bold',
   },
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff'
   },
   inputContainer: {
     flexDirection: 'row',
@@ -107,24 +109,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 20,
     width: '100%',
-    backgroundColor: '#E6E6FA', // Light purple shade
+    backgroundColor: '#E6E6FA',
   },
   youtubeIcon: {
     marginRight: 10,
   },
   input: {
     flex: 1,
-    height: 50,
+    height: 40,
+    width: '100%',
     fontSize: 16,
-    color: '#000', // Text color
+    color: '#000',
   },
   button: {
-    backgroundColor: '#6849EF', // Deep purple for the button
+    backgroundColor: '#6849EF',
     padding: 15,
     borderRadius: 8,
-    width: '100%',
+    width: 179,
+    height: 39,
     alignItems: 'center',
     marginBottom: 20,
+    justifyContent: 'center'
   },
   buttonText: {
     color: '#fff',
@@ -138,23 +143,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   adContainer: {
-    height: 50,
+    height: 68,
     width: '100%',
-    backgroundColor: '#DCDCDC', // Light gray for the ad container
+    backgroundColor: '#DCDCDC',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
   },
   flashcardsText: {
     fontSize: 18,
-    color: '#32CD32', // Lime green for generated flashcards text
-  },
-  bottomBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 60,
-    backgroundColor: '#6849EF', // Deep purple for the bottom bar
+    color: '#32CD32',
   },
 });
 
