@@ -1,30 +1,34 @@
+import urllib.parse
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 import re
-from dotenv import load_dotenv
 import os
-
+from pymongo import MongoClient
 
 # Load environment variables
-load_dotenv()
-#Hello
+#load_dotenv()
+
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
 
-
 # Configure Google Gemini API Key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = "AIzaSyCy7h-FPR4kaWbqDkrt8vDNMZKbfJ6yC-M"
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set. Please configure your environment variable.")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-@app.route("/", methods=["GET"])
-def home():
-    return jsonify({"message": "Server is running."})
+# Configure MongoDB
+username = urllib.parse.quote_plus("revisionary")
+password = urllib.parse.quote_plus("revisionary@123")
+MONGO_URI = f"mongodb+srv://{username}:{password}@revisionary.uni6n.mongodb.net/?retryWrites=true&w=majority&appName=Revisionary"
+client = MongoClient(MONGO_URI)
+db = client["revisionary"]
+summary_collection = db["summary"]
+quiz_collection = db["quiz"]
 
 # Function to extract video ID from YouTube URL
 def extract_video_id(youtube_url):
@@ -33,7 +37,7 @@ def extract_video_id(youtube_url):
     return match.group(1) if match else None
 
 # Function to get transcript
-def get_youtube_transcript(video_id, preferred_languages=["en", "hi","kan"]):
+def get_youtube_transcript(video_id, preferred_languages=["en", "hi"]):
     try:
         transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
 
@@ -138,8 +142,9 @@ def format_quiz_as_json(response_text):
 
     return {"quiz": questions}
 
-# API Endpoint
-@app.route("/process", methods=["POST"])
+# API Endpoint for generating summary
+# API Endpoint for generating summary
+@app.route("/summary", methods=["POST"])
 def process_youtube_url():
     data = request.json
     youtube_url = data.get("youtube_url")
@@ -151,6 +156,11 @@ def process_youtube_url():
     if not video_id:
         return jsonify({"error": "Invalid YouTube URL."}), 400
 
+    # Check if summary already exists in MongoDB
+    summary_document = summary_collection.find_one({"video_id": video_id})
+    if summary_document:
+        return jsonify({"summary": summary_document["summary"]})
+
     transcript, error = get_youtube_transcript(video_id)
     if error:
         return jsonify({"error": error}), 500
@@ -159,10 +169,39 @@ def process_youtube_url():
     if error:
         return jsonify({"error": error}), 500
 
+    # Save summary to MongoDB
+    summary_document = {
+        "video_id": video_id,
+        "summary": summary
+    }
+    summary_collection.insert_one(summary_document)
+
+    return jsonify({"summary": summary})
+
+# API Endpoint for generating quiz
+@app.route("/quiz", methods=["POST"])
+def generate_quiz_from_summary():
+    data = request.json
+    video_id = data.get("video_id")
+
+    if not video_id:
+        return jsonify({"error": "Video ID is required."}), 400
+
+    summary_document = summary_collection.find_one({"video_id": video_id})
+    if not summary_document:
+        return jsonify({"error": "Summary not found for the given video ID."}), 404
+
+    summary = summary_document["summary"]
     quiz = generate_quiz(summary)
 
-    response = {"video_id":video_id,"summary": summary, "quiz": quiz}
-    return jsonify(response)
+    # Save quiz to MongoDB
+    quiz_document = {
+        "video_id": video_id,
+        "quiz": quiz
+    }
+    quiz_collection.insert_one(quiz_document)
+
+    return jsonify({"quiz": quiz})
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
