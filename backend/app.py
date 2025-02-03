@@ -3,18 +3,18 @@ from flask_cors import CORS
 import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 import re
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
 # Load environment variables
-#load_dotenv()
+load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
 
 # Configure Google Gemini API Key
-GEMINI_API_KEY = "AIzaSyCy7h-FPR4kaWbqDkrt8vDNMZKbfJ6yC-M"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set. Please configure your environment variable.")
 
