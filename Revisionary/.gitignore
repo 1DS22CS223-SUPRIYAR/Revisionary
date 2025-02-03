@@ -4,6 +4,10 @@
 node_modules/
 backend/venv/
 
+# Ignore Python bytecode files
+*.pyc
+__pycache__/
+
 # Expo
 .expo/
 dist/
