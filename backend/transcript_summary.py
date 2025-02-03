@@ -21,6 +21,7 @@ if not GEMINI_API_KEY:
 genai.configure(api_key=GEMINI_API_KEY)
 
 @transcript_summary_bp.route("/extract", methods=["POST"])
+#Extract transcript
 def extract_transcript():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
