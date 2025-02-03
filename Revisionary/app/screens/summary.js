@@ -2,12 +2,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as Speech from 'expo-speech';  // Using Expo Speech for cross-platform support
+import * as Speech from 'expo-speech';  
 import BottomBar from '../components/bottom_bar';
+import { useRouter } from 'expo-router';
 
 const SummaryPage = () => {
   const navigation = useNavigation();
-
+  const router = useRouter();
   const summaryText = "This is a brief summary of the video content. It highlights the key points discussed and helps in quick revision.";
 
   // Function to handle text-to-speech using Expo Speech
@@ -63,10 +64,10 @@ const SummaryPage = () => {
         style={styles.nextButton} 
         onPress={() => {
           console.log("Next pressed");
-          // Example: navigation.navigate('NextScreen');
+          router.push('/screens/options')
         }}
       >
-        <Icon name="chevron-right" size={36} color="#6849EF" />
+        <Icon name="arrow-right" size={36} color="black" />
       </TouchableOpacity>
 
       {/* Bottom Bar */}
@@ -123,6 +124,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
+    bottom: 60,
+    top: 20,
   },
   summaryHeader: {
     flexDirection: 'row',
@@ -148,12 +151,15 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     position: 'absolute',
-    right: 20,
+    right: 50,
     bottom: 70, // Position above the BottomBar
-    backgroundColor: '#E6E6FA',
-    padding: 10,
-    borderRadius: 50,
+    paddingVertical: 8,
+    paddingHorizontal: 16, // Makes it a rounded rectangle
     elevation: 3,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 12, // Rounded rectangle shape
+    backgroundColor: 'transparent', // No background
   },
 });
 

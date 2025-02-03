@@ -8,8 +8,8 @@ const BottomBar = ({ currentScreen }) => {
 
   const tabs = [
     { name: 'Library', icon: 'book' },
-    { name: 'Rewards', icon: 'diamond' },
-    { name: 'Home', icon: 'home' },
+    { name: 'Subscription', icon: 'diamond' },
+    { name: 'index', icon: 'home' },
     { name: 'Info', icon: 'information-outline' },
     { name: 'Profile', icon: 'account' },
   ];

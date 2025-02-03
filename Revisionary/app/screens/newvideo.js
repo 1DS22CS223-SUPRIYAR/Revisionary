@@ -39,7 +39,7 @@ const FlashCardPage = () => {
       {/* Body */}
       <View style={styles.body}>
         <View style={styles.text}>
-          <Text size ={24}>Enter YouTube Video URL</Text>
+          <Text style={styles.title}>Enter YouTube Video URL</Text>
         </View>
         <View style={styles.inputContainer}>
           <Icon name="youtube" size={24} color="#FF6347" style={styles.youtubeIcon} />
@@ -96,11 +96,16 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   body: {
+    flex: 1, // Ensure the body occupies the full vertical space
     padding: 20,
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff'
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -133,7 +138,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 14, // Reduced text size for the "GENERATE" button
     fontWeight: 'bold',
   },
   image: {
