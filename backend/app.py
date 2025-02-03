@@ -6,12 +6,14 @@ import re
 from dotenv import load_dotenv
 import os
 
+
 # Load environment variables
 load_dotenv()
 #Hello
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
+
 
 # Configure Google Gemini API Key
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -20,6 +22,10 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Server is running."})
+
 # Function to extract video ID from YouTube URL
 def extract_video_id(youtube_url):
     regex = r"(?:v=|\/)([0-9A-Za-z_-]{11}).*"
@@ -27,7 +33,7 @@ def extract_video_id(youtube_url):
     return match.group(1) if match else None
 
 # Function to get transcript
-def get_youtube_transcript(video_id, preferred_languages=["en", "hi"]):
+def get_youtube_transcript(video_id, preferred_languages=["en", "hi","kan"]):
     try:
         transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
 
@@ -55,7 +61,9 @@ def generate_summary(transcript):
     try:
         model = genai.GenerativeModel("gemini-2.0-flash-exp")
         response1 = model.generate_content([
-            {"text": f"Translate to English if not in English. Is this strictly about history, politics, or geography? Reply '1' for yes, '0' for no. Just reply in one number.\n{transcript}"}
+            {"text": f"Translate the text to English if it is not already in English. "
+                         f"Is this strictly about social science,history, politics, or geography? Reply '1' for yes, '0' for no. Just reply in one number"
+                         f"Here is the text:\n{transcript}\n"}
         ])
 
         if not response1 or not hasattr(response1, 'text'):
@@ -67,7 +75,11 @@ def generate_summary(transcript):
 
         if soc == "1":
             response2 = model.generate_content([
-                {"text": f"Translate to English if not in English. Provide a 500-word summary without mentioning instructors or lecture duration:\n{transcript}"}
+               {"text": f"Translate the text to English if it is not already in English. "
+                             f"Here is the text:\n{transcript}\n"
+                             f"Provide a 500-word summary of the text. "
+                             f"Do not mention the instructor or the duration of the lecture. "
+                             f"Do not list the topics covered, but explain them in detail."}
             ])
             if not response2 or not hasattr(response2, 'text'):
                 return None, "Gemini API did not return a valid summary."
@@ -149,7 +161,7 @@ def process_youtube_url():
 
     quiz = generate_quiz(summary)
 
-    response = {"summary": summary, "quiz": quiz}
+    response = {"video_id":video_id,"summary": summary, "quiz": quiz}
     return jsonify(response)
 
 if __name__ == "__main__":
