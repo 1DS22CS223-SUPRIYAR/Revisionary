@@ -1,23 +1,34 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React ,  { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Speech from 'expo-speech';  
 import BottomBar from '../components/bottom_bar';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const SummaryPage = () => {
   const navigation = useNavigation();
   const router = useRouter();
-  const summaryText = "This is a brief summary of the video content. It highlights the key points discussed and helps in quick revision.";
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Retrieve summary and video_id from previous screen
+  const { summary, video_id } = useLocalSearchParams();
 
   // Function to handle text-to-speech using Expo Speech
   const readAloud = () => {
-    Speech.speak(summaryText, {
-      language: 'en',
-      pitch: 1.0,
-      rate: 1.0,
-    });
+    if (isSpeaking) {
+      // If speech is already playing, stop it
+      Speech.stop();
+      setIsSpeaking(false); // Update state to reflect that speech has stopped
+    } else {
+      // If speech is not playing, start it
+      Speech.speak(summary, {
+        language: 'en',
+        pitch: 1.0,
+        rate: 1.0,
+      });
+      setIsSpeaking(true); // Update state to reflect that speech is playing
+    }
   };
 
   return (
@@ -39,14 +50,14 @@ const SummaryPage = () => {
         {/* Topic Name */}
         <Text style={styles.topicName}>Topic: Understanding AI</Text>
 
-        {/* Summary Container */}
-        <View style={styles.summaryBox}>
+        {/* Summary Container (Purple Box) */}
+        <ScrollView style={styles.summaryBox}>
           {/* Summary Header with Icons */}
           <View style={styles.summaryHeader}>
             <Text style={styles.heading}>Video Summary</Text>
             <View style={styles.summaryIcons}>
               <TouchableOpacity onPress={readAloud}>
-                <Icon name="volume-high" size={24} color="#6849EF" />
+                <Icon name={isSpeaking ? "volume-off" : "volume-high"} size={24} color="#6849EF" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.starIcon}>
                 <Icon name="star-outline" size={24} color="#6849EF" />
@@ -55,16 +66,19 @@ const SummaryPage = () => {
           </View>
 
           {/* Summary Content */}
-          <Text style={styles.summaryText}>{summaryText}</Text>
-        </View>
+          <Text style={styles.summaryText}>{summary}</Text>
+        </ScrollView>
       </View>
 
       {/* Right Arrow Button */}
       <TouchableOpacity 
         style={styles.nextButton} 
         onPress={() => {
-          console.log("Next pressed");
-          router.push('/screens/options')
+          console.log("Next pressed, passing video_id:", video_id);
+          router.push({
+            pathname: '/screens/options',
+            params: { summary, video_id }
+          });
         }}
       >
         <Icon name="arrow-right" size={36} color="black" />
@@ -102,9 +116,9 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
+    backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: '#fff',
   },
   topicName: {
     fontSize: 18,
@@ -114,7 +128,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   summaryBox: {
-    flex: 1,
     backgroundColor: '#E6E6FA',
     borderRadius: 10,
     padding: 15,
@@ -124,8 +137,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
-    bottom: 60,
-    top: 20,
+    marginBottom: 20, // Adds a gap between the summary and the arrow button
+    maxHeight: 400, // Limit the height of the scrollable area if needed
   },
   summaryHeader: {
     flexDirection: 'row',

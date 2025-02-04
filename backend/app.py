@@ -2,10 +2,10 @@ import urllib.parse
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
-import re
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound 
 import os
-from pymongo import MongoClient
+from pymongo import MongoClient 
+import re 
 
 # Load environment variables
 #load_dotenv()
@@ -176,7 +176,7 @@ def process_youtube_url():
     }
     summary_collection.insert_one(summary_document)
 
-    return jsonify({"summary": summary})
+    return jsonify({"summary": summary, "video_id": video_id})
 
 # API Endpoint for generating quiz
 @app.route("/quiz", methods=["POST"])

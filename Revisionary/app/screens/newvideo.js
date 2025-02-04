@@ -4,21 +4,63 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import BottomBar from '../components/bottom_bar'; 
 import { useRouter } from 'expo-router';
+import axios from 'axios';
 
-const FlashCardPage = () => {
+function FlashCardPage() {
   const navigation = useNavigation();
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [flashcardsGenerated, setFlashcardsGenerated] = useState(false);
   const router = useRouter();
 
-  const handleGenerate = () => {
-    if (youtubeUrl) {
-      setFlashcardsGenerated(true);
-      console.log('Generating flashcards for:', youtubeUrl);
-      setYoutubeUrl('');
-      router.push('/screens/summary')
-    } else {
+  const handleGenerate = async () => {
+    if (!youtubeUrl) {
       alert('Please enter a valid YouTube URL.');
+      return;
+    }
+
+    try {
+      console.log('Sending YouTube URL to backend:', youtubeUrl);
+
+      // Send POST request to Flask backend
+      const response = await axios.post('http://127.0.0.1:5000/summary', {
+        youtube_url: youtubeUrl
+      });
+
+      // Handle response based on different scenarios
+      if (response.data.error) {
+        alert(response.data.error);
+        return;
+      }
+
+      console.log('Summary received:', response.data.summary);
+
+      // Store the summary in state or context if needed
+      setFlashcardsGenerated(true);
+      setYoutubeUrl('');
+
+      // Navigate to summary screen
+      router.push({
+        pathname: '/screens/summary',
+        params: {
+          summary: response.data.summary,
+          video_id: response.data.video_id
+        }
+      });
+
+    } catch (error) {
+      console.error('Error processing YouTube URL:', error);
+
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with an error status
+        alert(`Error: ${error.response.data.error || "Something went wrong!"}`);
+      } else if (error.request) {
+        // No response from server
+        alert("No response from server. Please check your connection.");
+      } else {
+        // Other errors
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -46,8 +88,7 @@ const FlashCardPage = () => {
           <TextInput
             style={styles.input}
             value={youtubeUrl}
-            onChangeText={setYoutubeUrl}
-          />
+            onChangeText={setYoutubeUrl} />
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleGenerate}>
@@ -69,7 +110,7 @@ const FlashCardPage = () => {
       <BottomBar currentScreen="Home" />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
