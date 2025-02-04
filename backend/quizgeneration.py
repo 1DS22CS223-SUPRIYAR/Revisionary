@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
@@ -19,6 +20,7 @@ def generate_quiz(summary):
     {summary}
 
     Each question should have four options (A, B, C, and D), and one correct answer should be clearly stated.
+    Make sure very carefully that are no stray asterisks anywhere.
     Use this format:
 
     Question: <question_text>
@@ -26,7 +28,8 @@ def generate_quiz(summary):
     B) <option_2>
     C) <option_3>
     D) <option_4>
-    Correct Answer: <correct_option>
+    Correct Answer: <correct_option without text>
+    Do not change a single thing about this format.
     """
 
     model = genai.GenerativeModel("gemini-pro")
@@ -45,11 +48,21 @@ def format_quiz_as_json(response_text):
 
     for block in blocks:
         lines = block.strip().split("\n")
+
+        if len(lines) > 1:
+            question_text = lines[1]
+        else:
+            raise ValueError("Quiz response does not have enough lines to extract a question.")
+
         
         question_text = lines[1]
         
         # Collect options (assuming options are always between line 1 and line 4)
-        options = [lines[i].replace("Option ", "").strip() for i in range(2, 6)]
+        options = {
+            "0":lines[2],
+            "1":lines[3],
+            "2":lines[4],
+            "3":lines[5]}
         
         # Correct Answer will be the last line in each block
         correct_answer = lines[6].replace("Correct Answer: ", "").strip()
@@ -85,4 +98,4 @@ def generate_quiz_api():
 
 # 🔹 Run Flask Server
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
