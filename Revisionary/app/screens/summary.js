@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
-    marginBottom: 20, // Adds a gap between the summary and the arrow button
+    marginBottom: 5, // Adds a gap between the summary and the arrow button
     maxHeight: 400, // Limit the height of the scrollable area if needed
   },
   summaryHeader: {

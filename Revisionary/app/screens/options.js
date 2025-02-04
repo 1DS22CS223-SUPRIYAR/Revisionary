@@ -38,10 +38,10 @@ const SaveSummaryPage = () => {
       console.log("Quiz Generated Successfully:", data.quiz);
       alert("Summary Saved & Quiz Generated Successfully!");
   
-      // Navigate to Quiz Page with quiz data using router.push
+      const quiz = JSON.stringify(data.quiz);
       router.push({
         pathname: '/screens/quiz',
-        query: { quiz: JSON.stringify(data.quiz), video_id },
+        params: { quiz, video_id },
       });
   
     } catch (error) {
@@ -54,7 +54,7 @@ const SaveSummaryPage = () => {
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.push({ pathname: '/screens/summary', query: { summary, video_id } })}>
+        <TouchableOpacity onPress={() => router.push({ pathname: '/screens/summary', params: { summary, video_id } })}>
           <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.topBarText}>Revisionary</Text>
@@ -76,6 +76,19 @@ const SaveSummaryPage = () => {
           </TouchableOpacity>
         </View>
       </View>
+      {/* Right Arrow Button */}
+            <TouchableOpacity 
+              style={styles.nextButton} 
+              onPress={() => {
+                console.log("Next pressed, passing video_id:", video_id);
+                router.push({
+                  pathname: '/screens/summary',
+                  params: { summary, video_id }
+                });
+              }}
+            >
+              <Icon name="arrow-left" size={36} color="black" />
+            </TouchableOpacity>
 
       {/* Bottom Bar */}
       <BottomBar currentScreen="SaveSummary" />
@@ -143,6 +156,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  nextButton: {
+    position: 'absolute',
+    left: 50,
+    bottom: 70, 
+    paddingVertical: 8,
+    paddingHorizontal: 16, 
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 12, 
+    backgroundColor: 'transparent',
   },
 });
 

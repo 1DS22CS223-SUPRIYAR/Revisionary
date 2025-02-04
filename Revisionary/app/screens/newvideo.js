@@ -106,7 +106,7 @@ function FlashCardPage() {
           <Text style={styles.flashcardsText}>Flashcards have been generated!</Text>
         )}
       </View>
-
+        
       {/* Bottom Bar */}
       <BottomBar currentScreen="Home" />
     </View>
