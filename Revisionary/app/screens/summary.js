@@ -165,14 +165,14 @@ const styles = StyleSheet.create({
   nextButton: {
     position: 'absolute',
     right: 50,
-    bottom: 70, // Position above the BottomBar
+    bottom: 70, 
     paddingVertical: 8,
-    paddingHorizontal: 16, // Makes it a rounded rectangle
+    paddingHorizontal: 16, 
     elevation: 3,
     borderWidth: 1,
     borderColor: 'black',
-    borderRadius: 12, // Rounded rectangle shape
-    backgroundColor: 'transparent', // No background
+    borderRadius: 12, 
+    backgroundColor: 'transparent',
   },
 });
 

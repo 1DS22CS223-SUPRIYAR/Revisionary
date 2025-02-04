@@ -36,7 +36,8 @@ export default function RootLayout() {
         {/* Other Screens */}
         <Stack.Screen name="index" options={{ title: 'Home' }} />
         <Stack.Screen name="screens/summary" options={{ title: 'Summary' }} />
-        <Stack.Screen name="screens/options" options={{ title: 'SaveSummary' }} />
+        <Stack.Screen name="screens/options" options={{ title: 'Options' }} />
+        <Stack.Screen name="screens/quiz" options={{ title: 'Quiz' }} />
 
 
         {/* Handle 404 - Not Found */}

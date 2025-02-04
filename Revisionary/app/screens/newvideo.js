@@ -33,6 +33,7 @@ function FlashCardPage() {
       }
 
       console.log('Summary received:', response.data.summary);
+      console.log('Video_id:', response.data.video_id);
 
       // Store the summary in state or context if needed
       setFlashcardsGenerated(true);

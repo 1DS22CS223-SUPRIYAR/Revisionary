@@ -159,7 +159,7 @@ def process_youtube_url():
     # Check if summary already exists in MongoDB
     summary_document = summary_collection.find_one({"video_id": video_id})
     if summary_document:
-        return jsonify({"summary": summary_document["summary"]})
+        return jsonify({"summary": summary_document["summary"], "video_id": summary_document["video_id"]})
 
     transcript, error = get_youtube_transcript(video_id)
     if error:
@@ -175,11 +175,11 @@ def process_youtube_url():
         "summary": summary
     }
     summary_collection.insert_one(summary_document)
-
+    print({"summary": summary, "video_id": video_id})
     return jsonify({"summary": summary, "video_id": video_id})
 
 # API Endpoint for generating quiz
-@app.route("/quiz", methods=["POST"])
+@app.route("/quiz", methods=["POST", "GET"])
 def generate_quiz_from_summary():
     data = request.json
     video_id = data.get("video_id")

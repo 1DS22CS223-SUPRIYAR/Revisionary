@@ -1,30 +1,60 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router'; // Using useRouter instead of useNavigation
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import BottomBar from '../components/bottom_bar'; 
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import BottomBar from '../components/bottom_bar';
 
 const SaveSummaryPage = () => {
-  const navigation = useNavigation();
-  const router = useRouter();
-  const { summary, video_id } = useLocalSearchParams();
+  const router = useRouter(); // Using router from expo-router
+  const { summary, video_id } = useLocalSearchParams(); // Extracting params from the URL
 
   const handleSaveSummary = () => {
     console.log('Summary Saved');
     alert('Summary Saved Successfully!');
   };
 
-  const handleSaveSummaryAndGenerateQuiz = () => {
-    console.log('Summary Saved & Quiz Generated');
-    alert('Summary Saved & Quiz Generated Successfully!');
+  const handleSaveSummaryAndGenerateQuiz = async (video_id) => {
+    if (!video_id) {
+      alert("Error: No video ID found.");
+      return;
+    }
+  
+    try {
+      const response = await fetch("http://localhost:5000/quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ video_id: video_id }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok || data.error) {
+        alert(`Error: ${data.error || "Failed to generate quiz."}`);
+        return;
+      }
+  
+      console.log("Quiz Generated Successfully:", data.quiz);
+      alert("Summary Saved & Quiz Generated Successfully!");
+  
+      // Navigate to Quiz Page with quiz data using router.push
+      router.push({
+        pathname: '/screens/quiz',
+        query: { quiz: JSON.stringify(data.quiz), video_id },
+      });
+  
+    } catch (error) {
+      console.error("Error fetching quiz:", error);
+      alert("An error occurred while generating the quiz. Please try again.");
+    }
   };
 
   return (
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.push({pathname:'/screens/summary', params: {summary, video_id}})}>
+        <TouchableOpacity onPress={() => router.push({ pathname: '/screens/summary', query: { summary, video_id } })}>
           <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.topBarText}>Revisionary</Text>
@@ -37,24 +67,15 @@ const SaveSummaryPage = () => {
       {/* Body */}
       <View style={styles.body}>
         <View style={styles.buttonBox}>
-        <TouchableOpacity style={styles.button} onPress={handleSaveSummary}>
-          <Text style={styles.buttonText}>SAVE SUMMARY</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleSaveSummary}>
+            <Text style={styles.buttonText}>SAVE SUMMARY</Text>
+          </TouchableOpacity>
         
-        <TouchableOpacity style={styles.button} onPress={handleSaveSummaryAndGenerateQuiz}>
-          <Text style={styles.buttonText}>SAVE AND GENERATE QUIZ</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => handleSaveSummaryAndGenerateQuiz(video_id)}>
+            <Text style={styles.buttonText}>SAVE AND GENERATE QUIZ</Text>
+          </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity 
-            style={styles.previousButton} 
-            onPress={() => {
-              console.log("Previous pressed");
-              router.push({pathname:'/screens/summary', params: {summary, video_id}});
-            }}
-          >
-            <Icon name="arrow-left" size={36} color="black" />
-      </TouchableOpacity>
 
       {/* Bottom Bar */}
       <BottomBar currentScreen="SaveSummary" />
@@ -122,18 +143,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
-  },
-  previousButton: {
-    position: 'absolute',
-    left: 50,
-    bottom: 70, // Position above the BottomBar
-    paddingVertical: 8,
-    paddingHorizontal: 16, // Makes it a rounded rectangle
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 12, // Rounded rectangle shape
-    backgroundColor: 'transparent', // No background
   },
 });
 
