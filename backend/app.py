@@ -192,7 +192,7 @@ def process_youtube_url():
     }
     summary_collection.insert_one(summary_document)
 
-    return jsonify({"summary": summary})
+    return jsonify({"summary": summary, "video_id": video_id})
 
 # API Endpoint for generating quiz
 @app.route("/quiz", methods=["POST"])
