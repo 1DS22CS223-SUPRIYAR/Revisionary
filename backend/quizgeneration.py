@@ -23,12 +23,14 @@ def generate_quiz(summary):
     Make sure very carefully that are no stray asterisks anywhere.
     Use this format:
 
-    Question: <question_text>
+    Number: <question_text>
     A) <option_1>
     B) <option_2>
     C) <option_3>
     D) <option_4>
     Correct Answer: <correct_option without text>
+
+    Ensure that each question block has exactly 6 lines. The question number should be on the same block as the actual question.
     Do not change a single thing about this format.
     """
 
@@ -55,17 +57,17 @@ def format_quiz_as_json(response_text):
             raise ValueError("Quiz response does not have enough lines to extract a question.")
 
         
-        question_text = lines[1]
+        question_text = lines[0]
         
         # Collect options (assuming options are always between line 1 and line 4)
         options = {
-            "0":lines[2],
-            "1":lines[3],
-            "2":lines[4],
-            "3":lines[5]}
+            "0":lines[1],
+            "1":lines[2],
+            "2":lines[3],
+            "3":lines[4]}
         
         # Correct Answer will be the last line in each block
-        correct_answer = lines[6].replace("Correct Answer: ", "").strip()
+        correct_answer = lines[5].replace("Correct Answer: ", "").strip()
 
         questions.append({
             "question": question_text,
