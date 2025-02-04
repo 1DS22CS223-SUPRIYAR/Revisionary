@@ -3,11 +3,12 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import BottomBar from '../components/bottom_bar'; 
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const SaveSummaryPage = () => {
   const navigation = useNavigation();
   const router = useRouter();
+  const { summary, video_id } = useLocalSearchParams();
 
   const handleSaveSummary = () => {
     console.log('Summary Saved');
@@ -23,7 +24,7 @@ const SaveSummaryPage = () => {
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.push({pathname:'/screens/summary', params: {summary, video_id}})}>
           <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.topBarText}>Revisionary</Text>
@@ -49,7 +50,7 @@ const SaveSummaryPage = () => {
             style={styles.previousButton} 
             onPress={() => {
               console.log("Previous pressed");
-              router.push('/screens/summary')
+              router.push({pathname:'/screens/summary', params: {summary, video_id}});
             }}
           >
             <Icon name="arrow-left" size={36} color="black" />

@@ -1,24 +1,34 @@
+import urllib.parse
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
-import re
-from dotenv import load_dotenv
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound 
 import os
+from pymongo import MongoClient 
+import re 
 
 # Load environment variables
-load_dotenv()
-#Hello
+#load_dotenv()
+
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
 
 # Configure Google Gemini API Key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = "AIzaSyCy7h-FPR4kaWbqDkrt8vDNMZKbfJ6yC-M"
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set. Please configure your environment variable.")
 
 genai.configure(api_key=GEMINI_API_KEY)
+
+# Configure MongoDB
+username = urllib.parse.quote_plus("revisionary")
+password = urllib.parse.quote_plus("revisionary@123")
+MONGO_URI = f"mongodb+srv://{username}:{password}@revisionary.uni6n.mongodb.net/?retryWrites=true&w=majority&appName=Revisionary"
+client = MongoClient(MONGO_URI)
+db = client["revisionary"]
+summary_collection = db["summary"]
+quiz_collection = db["quiz"]
 
 # Function to extract video ID from YouTube URL
 def extract_video_id(youtube_url):
@@ -55,7 +65,9 @@ def generate_summary(transcript):
     try:
         model = genai.GenerativeModel("gemini-2.0-flash-exp")
         response1 = model.generate_content([
-            {"text": f"Translate to English if not in English. Is this strictly about history, politics, or geography? Reply '1' for yes, '0' for no. Just reply in one number.\n{transcript}"}
+            {"text": f"Translate the text to English if it is not already in English. "
+                         f"Is this strictly about social science,history, politics, or geography? Reply '1' for yes, '0' for no. Just reply in one number"
+                         f"Here is the text:\n{transcript}\n"}
         ])
 
         if not response1 or not hasattr(response1, 'text'):
@@ -67,7 +79,11 @@ def generate_summary(transcript):
 
         if soc == "1":
             response2 = model.generate_content([
-                {"text": f"Translate to English if not in English. Provide a 500-word summary without mentioning instructors or lecture duration:\n{transcript}"}
+               {"text": f"Translate the text to English if it is not already in English. "
+                             f"Here is the text:\n{transcript}\n"
+                             f"Provide a 500-word summary of the text. "
+                             f"Do not mention the instructor or the duration of the lecture. "
+                             f"Do not list the topics covered, but explain them in detail."}
             ])
             if not response2 or not hasattr(response2, 'text'):
                 return None, "Gemini API did not return a valid summary."
@@ -126,8 +142,9 @@ def format_quiz_as_json(response_text):
 
     return {"quiz": questions}
 
-# API Endpoint
-@app.route("/process", methods=["POST"])
+# API Endpoint for generating summary
+# API Endpoint for generating summary
+@app.route("/summary", methods=["POST"])
 def process_youtube_url():
     data = request.json
     youtube_url = data.get("youtube_url")
@@ -139,6 +156,11 @@ def process_youtube_url():
     if not video_id:
         return jsonify({"error": "Invalid YouTube URL."}), 400
 
+    # Check if summary already exists in MongoDB
+    summary_document = summary_collection.find_one({"video_id": video_id})
+    if summary_document:
+        return jsonify({"summary": summary_document["summary"]})
+
     transcript, error = get_youtube_transcript(video_id)
     if error:
         return jsonify({"error": error}), 500
@@ -147,10 +169,39 @@ def process_youtube_url():
     if error:
         return jsonify({"error": error}), 500
 
+    # Save summary to MongoDB
+    summary_document = {
+        "video_id": video_id,
+        "summary": summary
+    }
+    summary_collection.insert_one(summary_document)
+
+    return jsonify({"summary": summary, "video_id": video_id})
+
+# API Endpoint for generating quiz
+@app.route("/quiz", methods=["POST"])
+def generate_quiz_from_summary():
+    data = request.json
+    video_id = data.get("video_id")
+
+    if not video_id:
+        return jsonify({"error": "Video ID is required."}), 400
+
+    summary_document = summary_collection.find_one({"video_id": video_id})
+    if not summary_document:
+        return jsonify({"error": "Summary not found for the given video ID."}), 404
+
+    summary = summary_document["summary"]
     quiz = generate_quiz(summary)
 
-    response = {"summary": summary, "quiz": quiz}
-    return jsonify(response)
+    # Save quiz to MongoDB
+    quiz_document = {
+        "video_id": video_id,
+        "quiz": quiz
+    }
+    quiz_collection.insert_one(quiz_document)
+
+    return jsonify({"quiz": quiz})
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
