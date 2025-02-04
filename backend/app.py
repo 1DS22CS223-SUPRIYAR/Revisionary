@@ -2,10 +2,10 @@ import urllib.parse
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound 
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
+import re
 import os
-from pymongo import MongoClient 
-import re 
+from pymongo import MongoClient
 
 # Load environment variables
 #load_dotenv()
@@ -98,27 +98,31 @@ def generate_summary(transcript):
 # Function to generate quiz
 def generate_quiz(summary):
     prompt = f"""
-    Generate a multiple-choice quiz in English based on the following summary:
+    Generate a multiple-choice quiz with exactly 5 questions based on the following summary:
 
     {summary}
 
-    Format:
-    Question: <question_text>
+    Each question should have four options (A, B, C, and D), and one correct answer should be clearly stated.
+    Make sure very carefully that are no stray asterisks anywhere.
+    Use this format:
+
+    Number: <question_text>
     A) <option_1>
     B) <option_2>
     C) <option_3>
     D) <option_4>
-    Correct Answer: <correct_option>
+    Correct Answer: <correct_option without text>
+
+    Ensure that each question block has exactly 6 lines. The question number should be on the same block as the actual question.
+    Do not change a single thing about this format.
     """
-    model = genai.GenerativeModel("gemini-2.0-flash-exp")
-    try:
-        response = model.generate_content(prompt)
-        if response.candidates and response.candidates[0].finish_reason != 3:
-            return format_quiz_as_json(response.text)
-        else:
-            return {"error": "Quiz could not be generated due to content safety restrictions."}
-    except Exception as e:
-        return {"error": f"Error generating quiz: {e}"}
+
+    model = genai.GenerativeModel("gemini-pro")
+    response = model.generate_content(prompt)
+
+    # Log the raw response to see the actual output from Gemini
+    
+    return response.text
 
 # Function to format quiz as JSON
 def format_quiz_as_json(response_text):
@@ -127,15 +131,27 @@ def format_quiz_as_json(response_text):
 
     for block in blocks:
         lines = block.strip().split("\n")
-        if len(lines) < 6:
-            continue
 
-        question = lines[0].replace("Question: ", "").strip()
-        options = [line[3:].strip() for line in lines[1:5]]  # Removing A), B), C), D)
+        if len(lines) > 1:
+            question_text = lines[1]
+        else:
+            raise ValueError("Quiz response does not have enough lines to extract a question.")
+
+        
+        question_text = lines[0]
+        
+        # Collect options (assuming options are always between line 1 and line 4)
+        options = {
+            "0":lines[1],
+            "1":lines[2],
+            "2":lines[3],
+            "3":lines[4]}
+        
+        # Correct Answer will be the last line in each block
         correct_answer = lines[5].replace("Correct Answer: ", "").strip()
 
         questions.append({
-            "question": question,
+            "question": question_text,
             "options": options,
             "correct_answer": correct_answer
         })
@@ -192,7 +208,8 @@ def generate_quiz_from_summary():
         return jsonify({"error": "Summary not found for the given video ID."}), 404
 
     summary = summary_document["summary"]
-    quiz = generate_quiz(summary)
+    quiz_response = generate_quiz(summary)
+    quiz = format_quiz_as_json(quiz_response)
 
     # Save quiz to MongoDB
     quiz_document = {
