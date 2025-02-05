@@ -1,109 +1,135 @@
-import React ,  { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Speech from 'expo-speech';  
 import BottomBar from '../components/bottom_bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import StatsIcons from '../components/stats_icons';
+import { ScrollView } from 'react-native';
+import axios from 'axios';
 
 const SummaryPage = () => {
   const navigation = useNavigation();
   const router = useRouter();
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [flashcards, setFlashcards] = useState([]);
 
-  // Retrieve summary and video_id from previous screen
   const { summary, video_id } = useLocalSearchParams();
 
-  // Function to handle text-to-speech using Expo Speech
+  useEffect(() => {
+    const fetchFlashcards = async () => {
+      try {
+        // Check if summary is an array or a string
+        if (Array.isArray(summary)) {
+          setFlashcards(summary);
+        } else if (typeof summary === 'string') {
+          // Split the string into an array of sentences or paragraphs
+          setFlashcards(summary.split(',,'));
+        } else {
+          console.error('Invalid summary format');
+        }
+      } catch (error) {
+        console.error('Error setting flashcards:', error);
+      }
+    };
+
+    fetchFlashcards();
+  }, [summary]);
+
   const readAloud = () => {
     if (isSpeaking) {
-      // If speech is already playing, stop it
       Speech.stop();
-      setIsSpeaking(false); // Update state to reflect that speech has stopped
+      setIsSpeaking(false);
     } else {
-      // If speech is not playing, start it
-      Speech.speak(summary, {
+      Speech.speak(flashcards[currentIndex], {
         language: 'en',
         pitch: 1.0,
         rate: 1.0,
       });
-      setIsSpeaking(true); // Update state to reflect that speech is playing
+      setIsSpeaking(true);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < flashcards.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      router.push({
+        pathname: '/screens/options',
+        params: { summary, video_id }
+      });
+    }
+  };
+
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={28} color="black" />
+          <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
-       
-        <StatsIcons></StatsIcons>
+        <Text style={styles.topBarText}>Summary</Text>
+        <View style={styles.iconsContainer}>
+          <Icon name="diamond" size={24} color="#fff" style={styles.icon} />
+          <Icon name="fire" size={24} color="#fff" style={styles.icon} />
+        </View>
       </View>
 
-      {/* Body */}
       <View style={styles.body}>
-        {/* Topic Name */}
-        {/* <Text style={styles.header}>Summary</Text> */}
-
-        {/* Summary Container (Purple Box) */}
-        <ScrollView style={styles.summaryBox}>
-          {/* Summary Header with Icons */}
-          <View style={styles.summaryHeader}>
-            <Text style={styles.heading}>Video Summary</Text>
-            <View style={styles.summaryIcons}>
-              <TouchableOpacity onPress={readAloud}>
-                <Icon name={isSpeaking ? "volume-off" : "volume-high"} size={24} color="#6849EF" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.starIcon}>
-                <Icon name="star-outline" size={24} color="#6849EF" />
-              </TouchableOpacity>
-            </View>
+      <Text style={styles.topicName}>Topic: Understanding AI</Text>
+      <View style={styles.summaryBox}>
+        <View style={styles.summaryHeader}>
+          <Text style={styles.heading}>Video Summary</Text>
+          <View style={styles.summaryIcons}>
+            <TouchableOpacity onPress={readAloud}>
+              <Icon name={isSpeaking ? "volume-off" : "volume-high"} size={24} color="#6849EF" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.starIcon}>
+              <Icon name="star-outline" size={24} color="#6849EF" />
+            </TouchableOpacity>
           </View>
+        </View>
 
-          {/* Summary Content */}
-          <Text style={styles.summaryText}>{summary}</Text>
-        </ScrollView>
+        <View style={styles.flashcard}>
+          <ScrollView>
+            <Text style={styles.flashcardText}>{flashcards[currentIndex]}</Text>
+          </ScrollView>
+        </View>
       </View>
 
-      {/* Right Arrow Button */}
-      <TouchableOpacity 
-        style={styles.nextButton} 
-        onPress={() => {
-          console.log("Next pressed, passing video_id:", video_id);
-          router.push({
-            pathname: '/screens/options',
-            params: { summary, video_id }
-          });
-        }}
-      >
-        <Icon name="arrow-right" size={36} color="black" />
-      </TouchableOpacity>
-
-      {/* Bottom Bar */}
-      <BottomBar currentScreen="Summary" />
+      <View style={styles.navigationButtons}>
+        <TouchableOpacity onPress={handleBack} disabled={currentIndex === 0}>
+          <Icon name="arrow-left" size={36} color={currentIndex === 0 ? "#ccc" : "#6849EF"} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleNext}>
+          <Icon name="arrow-right" size={36} color="#6849EF" />
+        </TouchableOpacity>
+      </View>
     </View>
-  );
+
+    <BottomBar currentScreen="Summary" />
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     height: 60,
     paddingHorizontal: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 }, 
-    shadowOpacity: 0.02, 
-    shadowRadius: 2,
-    elevation: 2, 
+    backgroundColor: '#6849EF',
   },
   topBarText: {
     color: '#FFFFFF',
@@ -122,13 +148,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
-  header: { 
-    fontSize: 24, // Header font size
-    padding: 5
+  topicName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#6849EF',
+    marginBottom: 10,
+    alignSelf: 'flex-start',
   },
   summaryBox: {
     backgroundColor: '#E6E6FA',
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 15,
     width: '100%',
     shadowColor: '#000',
@@ -136,8 +165,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
-    marginBottom: 5, // Adds a gap between the summary and the arrow button
-    maxHeight: 500, // Limit the height of the scrollable area if needed
+    marginBottom: 20,
+    maxHeight: 400,
   },
   summaryHeader: {
     flexDirection: 'row',
@@ -156,26 +185,27 @@ const styles = StyleSheet.create({
   starIcon: {
     marginLeft: 10,
   },
-  summaryText: {
+  flashcard: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  flashcardText: {
     fontSize: 16,
     color: '#000',
-    textAlign: 'left',
+    textAlign: 'center',
   },
-  nextButton: {
-    position: 'absolute',
-    right: 50,
-    bottom: 70, 
-    paddingVertical: 8,
-    paddingHorizontal: 16, 
-    elevation: 3,
-    borderWidth: 1,
-    borderRadius:12,
-    borderColor: "black",
-    width: 70,
-    alignItems: "center",
-    justifyContent: "center",
+  navigationButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
-  
 });
 
 export default SummaryPage;

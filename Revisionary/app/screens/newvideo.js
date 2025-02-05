@@ -24,7 +24,7 @@ function FlashCardPage() {
       console.log('Sending YouTube URL to backend:', youtubeUrl);
 
       // Send POST request to Flask backend
-      const response = await axios.post('http://127.0.0.1:5000/summary', {
+      const response = await axios.post('http://192.168.200.158:5000/summary', {
         youtube_url: youtubeUrl
       });
 

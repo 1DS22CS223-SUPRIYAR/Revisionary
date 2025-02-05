@@ -18,13 +18,14 @@ const SaveSummaryPage = () => {
   };
 
   const handleSaveSummaryAndGenerateQuiz = async (video_id) => {
+    print(video_id)
     if (!video_id) {
       alert("Error: No video ID found.");
       return;
     }
   
     try {
-      const response = await fetch("http://localhost:5000/quiz", {
+      const response = await fetch("http://192.168.200.158:5000/quiz", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,3 +1,4 @@
+#integrating with changes at 0502251722
 import urllib.parse
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -29,6 +30,7 @@ client = MongoClient(MONGO_URI)
 db = client["revisionary"]
 summary_collection = db["summary"]
 quiz_collection = db["quiz"]
+flashcards_collection = db["flashcards"]
 
 # Function to extract video ID from YouTube URL
 def extract_video_id(youtube_url):
@@ -88,9 +90,9 @@ def generate_summary(transcript):
             if not response2 or not hasattr(response2, 'text'):
                 return None, "Gemini API did not return a valid summary."
 
-            return response2.text.strip(), None
+            return response2.text.strip().split('\n'), None
 
-        return None, "Content is not related to history, politics, geography, or English literature."
+        return None, "Content is not related to history, politics, geography or English Literature."
 
     except Exception as e:
         return None, f"Error generating summary: {str(e)}"
@@ -160,6 +162,61 @@ def format_quiz_as_json(response_text):
 
 # API Endpoint for generating summary
 # API Endpoint for generating summary
+
+# Function to generate flashcards from summary
+# def generate_flashcards(summary):
+#     try:
+#         model = genai.GenerativeModel("gemini-2.0-flash-exp")
+#         response = model.generate_content([
+#             {"text": f"Translate the text to English if it is not already in English. "
+#                      f"Do not mention Here is a 5 point summary and there shouldnt be blanks between the points. "
+#                      f"Provide a summary of the text in 5 points, each point containing around 60 words. "
+#                      f"Here is the text:\n{summary}\n"
+#                      f"Do not mention the instructor or the duration of the lecture. "
+#                      f"Do not list the topics covered, but explain them in detail."}
+#         ])
+
+#         if not response or not hasattr(response, 'text'):
+#             return None, "Gemini API did not return a valid response."
+
+#         return response.text.strip().split('\n'), None
+
+#     except Exception as e:
+#         return None, f"Error generating flashcards: {str(e)}"
+
+# # API Endpoint for generating flashcards
+# @app.route("/flashcards", methods=["POST"])
+# def generate_flashcards_api():
+#     data = request.json
+#     youtube_url = data.get("youtube_url")
+
+#     if not youtube_url:
+#         return jsonify({"error": "YouTube URL is required."}), 400
+
+#     video_id = extract_video_id(youtube_url)
+#     if not video_id:
+#         return jsonify({"error": "Invalid YouTube URL."}), 400
+    
+#     flashcards_document = flashcards_collection.find_one({"video_id": video_id})
+#     if flashcards_document:
+#         return jsonify({"flashcards": flashcards_document["flashcard"], "video_id": video_id})
+    
+#     transcript, error = get_youtube_transcript(video_id)
+#     if error:
+#         return jsonify({"error": error}), 500
+
+#     flashcards, error = generate_flashcards(transcript)
+#     if error:
+#         return jsonify({"error": error}), 500
+    
+#     flashcards_document = {
+#         "video_id": video_id,
+#         "flashcard": flashcards
+#     }
+#     flashcards_collection.insert_one(flashcards_document)
+
+#     return jsonify({"flashcards": flashcards, "video_id": video_id})
+
 @app.route("/summary", methods=["POST"])
 def process_youtube_url():
     data = request.json
@@ -191,6 +248,7 @@ def process_youtube_url():
         "summary": summary
     }
     summary_collection.insert_one(summary_document)
+
     print({"summary": summary, "video_id": video_id})
     return jsonify({"summary": summary, "video_id": video_id})
 
