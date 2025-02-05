@@ -92,9 +92,10 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   learnImage: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     borderRadius: 8,
+    resizeMode: "contain",
   },
   scrollContainer: {
     flexGrow: 1, // Allow scrolling content to fill space between button and bottom bar
