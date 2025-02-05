@@ -66,8 +66,7 @@ def generate_summary(transcript):
         model = genai.GenerativeModel("gemini-2.0-flash-exp")
         response1 = model.generate_content([
             {"text": f"Translate the text to English if it is not already in English. "
-                         f"Is this strictly about social science,history, politics, geography,,Literary analysis, Poetry, Novels, plays, essays, Linguistics,
-Writing styles or English Literature?? Reply '1' for yes, '0' for no. Just reply in one number"
+                         f"Is this strictly about social science,history, politics, geography,,Literary analysis, Poetry, Novels, plays, essays, Linguistics, Writing styles or English Literature?? Reply '1' for yes, '0' for no. Just reply in one number"
                          f"Here is the text:\n{transcript}\n"}
         ])
 

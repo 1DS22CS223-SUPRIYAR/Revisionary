@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Speech from 'expo-speech';  
 import BottomBar from '../components/bottom_bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import StatsIcons from '../components/stats_icons';
 
 const SummaryPage = () => {
   const navigation = useNavigation();
@@ -36,19 +37,16 @@ const SummaryPage = () => {
       {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={28} color="#fff" />
+          <Icon name="arrow-left" size={28} color="black" />
         </TouchableOpacity>
-        <Text style={styles.topBarText}>Summary</Text>
-        <View style={styles.iconsContainer}>
-          <Icon name="diamond" size={24} color="#fff" style={styles.icon} />
-          <Icon name="fire" size={24} color="#fff" style={styles.icon} />
-        </View>
+       
+        <StatsIcons></StatsIcons>
       </View>
 
       {/* Body */}
       <View style={styles.body}>
         {/* Topic Name */}
-        <Text style={styles.topicName}>Topic: Understanding AI</Text>
+        {/* <Text style={styles.header}>Summary</Text> */}
 
         {/* Summary Container (Purple Box) */}
         <ScrollView style={styles.summaryBox}>
@@ -93,15 +91,19 @@ const SummaryPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
   },
   topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     height: 60,
     paddingHorizontal: 15,
-    backgroundColor: '#6849EF',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 }, 
+    shadowOpacity: 0.02, 
+    shadowRadius: 2,
+    elevation: 2, 
   },
   topBarText: {
     color: '#FFFFFF',
@@ -120,16 +122,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
-  topicName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#6849EF',
-    marginBottom: 10,
-    alignSelf: 'flex-start',
+  header: { 
+    fontSize: 24, // Header font size
+    padding: 5
   },
   summaryBox: {
     backgroundColor: '#E6E6FA',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 15,
     width: '100%',
     shadowColor: '#000',
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
     marginBottom: 5, // Adds a gap between the summary and the arrow button
-    maxHeight: 400, // Limit the height of the scrollable area if needed
+    maxHeight: 500, // Limit the height of the scrollable area if needed
   },
   summaryHeader: {
     flexDirection: 'row',
@@ -170,10 +169,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, 
     elevation: 3,
     borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 12, 
-    backgroundColor: 'transparent',
+    borderRadius:12,
+    borderColor: "black",
+    width: 70,
+    alignItems: "center",
+    justifyContent: "center",
   },
+  
 });
 
 export default SummaryPage;

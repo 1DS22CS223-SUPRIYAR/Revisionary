@@ -1,16 +1,20 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router'; // Using useRouter instead of useNavigation
+import { useRouter, useLocalSearchParams } from 'expo-router'; 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import BottomBar from '../components/bottom_bar';
+import StatsIcons from '../components/stats_icons';
 
 const SaveSummaryPage = () => {
-  const router = useRouter(); // Using router from expo-router
-  const { summary, video_id } = useLocalSearchParams(); // Extracting params from the URL
+  const router = useRouter(); 
+  const { summary, video_id } = useLocalSearchParams(); 
 
   const handleSaveSummary = () => {
     console.log('Summary Saved');
     alert('Summary Saved Successfully!');
+    router.push({
+      pathname: '/',
+    });
   };
 
   const handleSaveSummaryAndGenerateQuiz = async (video_id) => {
@@ -55,13 +59,10 @@ const SaveSummaryPage = () => {
       {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.push({ pathname: '/screens/summary', params: { summary, video_id } })}>
-          <Icon name="arrow-left" size={28} color="#fff" />
+          <Icon name="arrow-left" size={28} color="black" />
         </TouchableOpacity>
         <Text style={styles.topBarText}>Revisionary</Text>
-        <View style={styles.iconsContainer}>
-          <Icon name="diamond" size={24} color="#fff" style={styles.icon} />
-          <Icon name="fire" size={24} color="#fff" style={styles.icon} />
-        </View>
+        <StatsIcons></StatsIcons>
       </View>
 
       {/* Body */}
@@ -99,15 +100,19 @@ const SaveSummaryPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
   },
   topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     height: 60,
     paddingHorizontal: 15,
-    backgroundColor: '#6849EF',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 }, 
+    shadowOpacity: 0.02, 
+    shadowRadius: 2,
+    elevation: 2, 
   },
   topBarText: {
     color: '#FFFFFF',
@@ -154,7 +159,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   nextButton: {
@@ -166,8 +171,8 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: 'black',
-    borderRadius: 12, 
-    backgroundColor: 'transparent',
+    borderRadius: 12,
+    width: 70
   },
 });
 

@@ -31,14 +31,15 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         {/* Launching App with NewVideo Screen */}
-        <Stack.Screen name="screens/newvideo" options={{ title: 'NewVideo' }} />
+     
 
         {/* Other Screens */}
         <Stack.Screen name="index" options={{ title: 'Home' }} />
+        <Stack.Screen name="screens/newvideo" options={{ title: 'NewVideo' }} />
         <Stack.Screen name="screens/summary" options={{ title: 'Summary' }} />
         <Stack.Screen name="screens/options" options={{ title: 'Options' }} />
         <Stack.Screen name="screens/quiz" options={{ title: 'Quiz' }} />
-
+        <Stack.Screen name="screens/analytics" options={{ title: 'Analytics' }} />
 
         {/* Handle 404 - Not Found */}
         <Stack.Screen name="+not-found" options={{ title: 'Page Not Found' }} />
