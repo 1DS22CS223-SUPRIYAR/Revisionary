@@ -66,12 +66,11 @@ const QuizPage = ({ onSubmit }) => {
    
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Icon name="arrow-left" size={28} color="#fff" />
+          <Icon name="arrow-left" size={28} color="black" />
         </TouchableOpacity>
-        <Text style={styles.topBarText}>Quiz</Text>
        <StatsIcons></StatsIcons>
       </View>
-
+      <Text style={styles.header}>Quiz</Text>
 
       <View style={styles.quizContainer1}> 
     
@@ -140,7 +139,7 @@ const QuizPage = ({ onSubmit }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#fff",
   },
   topBar: {
     flexDirection: "row",
@@ -164,6 +163,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginLeft: 10,
+  },
+  header: { 
+    fontSize: 24, // Header font size
+    padding: 5
   },
   progressContainer: {
     marginTop: 20,

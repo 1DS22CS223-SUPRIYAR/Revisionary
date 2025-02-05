@@ -6,7 +6,7 @@ import BottomBar from '../components/bottom_bar';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
 import { Dimensions } from 'react-native';
-
+import StatsIcons from '../components/stats_icons';
 
 function FlashCardPage() {
   const navigation = useNavigation();
@@ -68,15 +68,12 @@ function FlashCardPage() {
 
   return (
     <View style={styles.container}>
-      {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={28} color="#fff" />
+        <TouchableOpacity onPress={() => router.push("/")}>
+          <Icon name="arrow-left" size={28} color="black" />
         </TouchableOpacity>
-        <Text style={styles.topBarText}>Revisionary</Text>
         <View style={styles.iconsContainer}>
-          <Icon name="diamond" size={24} color="#fff" style={styles.icon} />
-          <Icon name="fire" size={24} color="#fff" style={styles.icon} />
+         <StatsIcons></StatsIcons>
         </View>
       </View>
 
@@ -117,23 +114,27 @@ function FlashCardPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
   },
   topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     height: 60,
     paddingHorizontal: 15,
-    backgroundColor: '#6849EF',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 }, 
+    shadowOpacity: 0.02, 
+    shadowRadius: 2,
+    elevation: 2, 
   },
   topBarText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   iconsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   icon: {
     marginLeft: 10,
