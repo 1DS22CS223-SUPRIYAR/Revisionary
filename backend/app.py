@@ -14,7 +14,12 @@ from pymongo import MongoClient
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
-
+@app.route("/")
+def home():
+    return jsonify({"message": "Server is running"}), 200
+@app.route('/favicon.ico')
+def favicon():
+    return jsonify({"message": "Favicon not found"}), 404
 # Configure Google Gemini API Key
 GEMINI_API_KEY = "AIzaSyCy7h-FPR4kaWbqDkrt8vDNMZKbfJ6yC-M"
 if not GEMINI_API_KEY:
