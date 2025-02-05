@@ -5,7 +5,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import BottomBar from '../components/bottom_bar'; 
 import { useRouter } from 'expo-router';
 import axios from 'axios';
-import StatsIcons from '../components/stats_icons';
+import { Dimensions } from 'react-native';
+
 
 function FlashCardPage() {
   const navigation = useNavigation();
@@ -34,7 +35,6 @@ function FlashCardPage() {
       }
 
       console.log('Summary received:', response.data.summary);
-      console.log('Video_id:', response.data.video_id);
 
       // Store the summary in state or context if needed
       setFlashcardsGenerated(true);
@@ -71,24 +71,26 @@ function FlashCardPage() {
       {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={28} color="black" />
+          <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
-      
-        <StatsIcons></StatsIcons>
-      
+        <Text style={styles.topBarText}>Revisionary</Text>
+        <View style={styles.iconsContainer}>
+          <Icon name="diamond" size={24} color="#fff" style={styles.icon} />
+          <Icon name="fire" size={24} color="#fff" style={styles.icon} />
+        </View>
       </View>
 
       {/* Body */}
       <View style={styles.body}>
-        <View style={styles.text}>
-          <Text style={styles.title}>Enter YouTube Video URL</Text>
-        </View>
+      <Text style={styles.title}>Enter YouTube Video URL</Text>
         <View style={styles.inputContainer}>
           <Icon name="youtube" size={24} color="#FF6347" style={styles.youtubeIcon} />
           <TextInput
             style={styles.input}
             value={youtubeUrl}
-            onChangeText={setYoutubeUrl} />
+            onChangeText={setYoutubeUrl} 
+            placeholder="Enter YouTube URL"
+            />
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleGenerate}>
@@ -105,7 +107,7 @@ function FlashCardPage() {
           <Text style={styles.flashcardsText}>Flashcards have been generated!</Text>
         )}
       </View>
-        
+
       {/* Bottom Bar */}
       <BottomBar currentScreen="Home" />
     </View>
@@ -115,19 +117,15 @@ function FlashCardPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#F5F5F5',
   },
   topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     height: 60,
     paddingHorizontal: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 }, 
-    shadowOpacity: 0.02, 
-    shadowRadius: 2,
-    elevation: 2, 
+    backgroundColor: '#6849EF',
   },
   topBarText: {
     color: '#FFFFFF',
@@ -145,12 +143,13 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-   
+    backgroundColor: '#fff'
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -160,6 +159,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: '100%',
     backgroundColor: '#E6E6FA',
+    marginHorizontal: 'auto',
   },
   youtubeIcon: {
     marginRight: 10,
@@ -188,9 +188,10 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
+    height: 450,
     borderRadius: 10,
     marginBottom: 20,
+    alignSelf: 'flex-end',
   },
   adContainer: {
     height: 68,
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DCDCDC',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop:'auto',
   },
   flashcardsText: {
     fontSize: 18,
