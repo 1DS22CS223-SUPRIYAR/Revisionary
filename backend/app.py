@@ -90,7 +90,7 @@ def generate_summary(transcript):
 
             return response2.text.strip(), None
 
-        return None, "Content is not related to history, politics, or geography."
+        return None, "Content is not related to history, politics, geography, or English literature."
 
     except Exception as e:
         return None, f"Error generating summary: {str(e)}"
