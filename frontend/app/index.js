@@ -36,7 +36,7 @@ export default function HomeScreen() {
 
       {/* Bottom Bar */}
       <View style={styles.bottomBarWrapper}>
-        <BottomBar currentScreen = "Home"/>
+        <BottomBar currentScreen = "index"/>
       </View>
     </View>
   );
