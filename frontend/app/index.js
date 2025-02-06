@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "rea
 import { useRouter } from "expo-router";
 import StatsIcons from "./components/stats_icons";
 import BottomBar from "./components/bottom_bar";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(true); 
 
 export default function HomeScreen() {
   const router = useRouter();
