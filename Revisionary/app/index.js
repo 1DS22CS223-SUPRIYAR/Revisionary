@@ -47,7 +47,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "flex-start", // Ensures the content starts from top
+    justifyContent: "flex-start",
+    width: '100%',
+    height: '100%', // Ensures the content starts from top
   },
   topBar: {
     flexDirection: "row",

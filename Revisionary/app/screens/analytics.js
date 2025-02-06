@@ -142,11 +142,11 @@ const AnalyticsPage = () => {
       marginLeft: 10,
     },
     header: { 
-      fontSize: 24, // Header font size
+      fontSize: 24, 
       padding: 5
     },
     subHeader: { 
-        fontSize: 22, // Header font size
+        fontSize: 22, 
         padding: 5
     },
     scoreContainer: {
@@ -193,30 +193,30 @@ const AnalyticsPage = () => {
     questionContainer: {
       marginBottom: 20,
       padding: 15,
-      backgroundColor: "#E8E4FD", // Default background color
+      backgroundColor: "#E8E4FD", 
       borderRadius: 8,
       elevation: 3,
     },
     correctBackground: {
-      backgroundColor: "#C0EBA6", // Background color when the answer is correct
+      backgroundColor: "#C0EBA6",
     },
     incorrectBackground: {
         backgroundColor: "#FF8A8A"
     },
     question: {
-      fontSize: 16,
+      fontSize: 18,
       fontWeight: "bold",
       marginBottom: 10,
       color: "#333",
     },
     selectedAnswer: {
-      fontSize: 14,
+      fontSize: 16,
       marginBottom: 10,
       color: "black",
       padding: 5
     },
     correctAnswer: {
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: "bold",
     },
     correct: {

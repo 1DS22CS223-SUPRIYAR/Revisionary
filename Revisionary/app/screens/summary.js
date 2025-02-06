@@ -7,6 +7,7 @@ import BottomBar from '../components/bottom_bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ScrollView } from 'react-native';
 import axios from 'axios';
+import StatsIcons from '../components/stats_icons';
 
 const SummaryPage = () => {
   const navigation = useNavigation();
@@ -70,22 +71,20 @@ const SummaryPage = () => {
 
   return (
     <View style={styles.container}>
+   
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={28} color="#fff" />
+        <TouchableOpacity onPress={() => router.push("/screens/newvideo")}>
+          <Icon name="arrow-left" size={28} color="black" />
         </TouchableOpacity>
-        <Text style={styles.topBarText}>Summary</Text>
         <View style={styles.iconsContainer}>
-          <Icon name="diamond" size={24} color="#fff" style={styles.icon} />
-          <Icon name="fire" size={24} color="#fff" style={styles.icon} />
+         <StatsIcons></StatsIcons>
         </View>
       </View>
 
       <View style={styles.body}>
-      <Text style={styles.topicName}>Topic: Understanding AI</Text>
+      <Text style={styles.header}>Summary</Text>
       <View style={styles.summaryBox}>
         <View style={styles.summaryHeader}>
-          <Text style={styles.heading}>Video Summary</Text>
           <View style={styles.summaryIcons}>
             <TouchableOpacity onPress={readAloud}>
               <Icon name={isSpeaking ? "volume-off" : "volume-high"} size={24} color="#6849EF" />
@@ -96,19 +95,21 @@ const SummaryPage = () => {
           </View>
         </View>
 
-        <View style={styles.flashcard}>
-          <ScrollView>
-            <Text style={styles.flashcardText}>{flashcards[currentIndex]}</Text>
+        <View style={styles.flashcard} >
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
+          <View style={{ flex: 1, justifyContent: "center" }}> 
+              <Text style={styles.flashcardText}>{flashcards[currentIndex]}</Text>
+          </View>
           </ScrollView>
         </View>
       </View>
 
-      <View style={styles.navigationButtons}>
-        <TouchableOpacity onPress={handleBack} disabled={currentIndex === 0}>
-          <Icon name="arrow-left" size={36} color={currentIndex === 0 ? "#ccc" : "#6849EF"} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={handleBack} disabled={currentIndex === 0} style = {styles.navigationButtons}>
+          <Icon name="arrow-left" size={36} color={currentIndex === 0 ? "#ccc" : "black"} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleNext}>
-          <Icon name="arrow-right" size={36} color="#6849EF" />
+        <TouchableOpacity onPress={handleNext} style = {styles.navigationButtons}>
+          <Icon name="arrow-right" size={36} color="black" />
         </TouchableOpacity>
       </View>
     </View>
@@ -121,15 +122,23 @@ const SummaryPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
+  },
+  header: { 
+    fontSize: 24, // Header font size
+    padding: 5
   },
   topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     height: 60,
     paddingHorizontal: 15,
-    backgroundColor: '#6849EF',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 }, 
+    shadowOpacity: 0.02, 
+    shadowRadius: 2,
+    elevation: 2, 
   },
   topBarText: {
     color: '#FFFFFF',
@@ -166,11 +175,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
     marginBottom: 20,
-    maxHeight: 400,
+    height: "80%", // Fixed height for the container
   },
   summaryHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'right',
     alignItems: 'center',
     marginBottom: 10,
   },
@@ -185,26 +194,39 @@ const styles = StyleSheet.create({
   starIcon: {
     marginLeft: 10,
   },
+  
+  
   flashcard: {
-    backgroundColor: '#fff',
+   
     borderRadius: 10,
     padding: 15,
     marginBottom: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
     elevation: 3,
+    height: "90%", // Set a fixed height to maintain consistency
+    justifyContent: "center", 
+    alignItems: "center",  // Center horizontally
   },
   flashcardText: {
-    fontSize: 16,
-    color: '#000',
-    textAlign: 'center',
+    fontSize: 18,
+    color: 'black',
+    textAlign: 'left',
+    textAlignVertical: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 100,
+    marginBottom: 20,
   },
   navigationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
+    borderWidth: 1,
+    borderRadius:12,
+    borderColor: "black",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    width: 70,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

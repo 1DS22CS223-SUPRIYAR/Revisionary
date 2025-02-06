@@ -18,14 +18,13 @@ const SaveSummaryPage = () => {
   };
 
   const handleSaveSummaryAndGenerateQuiz = async (video_id) => {
-    print(video_id)
     if (!video_id) {
       alert("Error: No video ID found.");
       return;
     }
   
     try {
-      const response = await fetch("http://192.168.200.158:5000/quiz", {
+      const response = await fetch("http://127.0.0.1:5000/quiz", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +151,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#6849EF',
     padding: 15,
     borderRadius: 8,
-    width: 250,
+    width: 300,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   nextButton: {

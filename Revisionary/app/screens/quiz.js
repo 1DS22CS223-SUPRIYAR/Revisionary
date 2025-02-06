@@ -85,7 +85,7 @@ const QuizPage = ({ onSubmit }) => {
             borderRadius={8}
             borderWidth={0}
             color="#747474" // ✅ Dark Gray
-            unfilledColor="#EAECF0" // ✅ Light Gray
+            unfilledColor="#F8F9FB" // ✅ Light Gray
           />
         </View>
         
@@ -108,8 +108,13 @@ const QuizPage = ({ onSubmit }) => {
 
       {/* Navigation Buttons */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handlePrevious} disabled={currentQuestionIndex === 0} style={styles.navButton}>
-          <Icon name="arrow-left" size={30} color="black" />
+        <TouchableOpacity 
+          onPress={handlePrevious} 
+          style={
+            styles.navButton
+          }
+        >
+          <Icon name="arrow-left" size={36} color={currentQuestionIndex === 0 ? "#ccc" : "black"} />
         </TouchableOpacity>
 
         {currentQuestionIndex === quizData.quiz.length - 1 ? (
@@ -120,12 +125,12 @@ const QuizPage = ({ onSubmit }) => {
             style={[styles.navButton, styles.submitButton, !allQuestionsAnswered && { opacity: 0.5 }]} 
             disabled={!allQuestionsAnswered} // ✅ Now correctly disables the button
           >
-            <Icon name="check" size={30} color="#fff" />
+            <Icon name="check" size={36} color="#fff" />
           </TouchableOpacity>
         </View>
         ) : (
           <TouchableOpacity onPress={handleNext} style={styles.navButton}>
-            <Icon name="arrow-right" size={30} color="black" />
+            <Icon name="arrow-right" size={36} color="black" />
           </TouchableOpacity>
         )}
       </View>
@@ -190,7 +195,7 @@ const styles = StyleSheet.create({
   quizContainer1: {
     flex: 1,
     margin: 20,
-    padding: 20,
+    padding: 12,
     backgroundColor: "#E6E6FA",
     borderRadius: 10,
     shadowColor: "#000",
@@ -205,6 +210,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: "left",
   },
+ 
   optionButton: {
     padding: 12,
     borderRadius: 8,
@@ -212,11 +218,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedOption: {
-    backgroundColor: "#4B4B4B", // ✅ Dark Gray
+    backgroundColor: "#6849EF",
+     // ✅ Dark Gray
   },
   optionText: {
     color: "#000",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "500",
     textAlign: "left"
   },
