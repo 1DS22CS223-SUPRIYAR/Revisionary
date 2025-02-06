@@ -15,7 +15,7 @@ export default function HomeScreen() {
           <Text style={styles.visionary}>Re</Text>
           <Text style={styles.visionaryColored}>Visionary</Text>
         </Text>
-        <StatsIcons fireCount={5} coinCount={10} /> {/* Example counts */}
+        <StatsIcons></StatsIcons> {/* Example counts */}
       </View>
 
       {/* Start Learning Section */}
@@ -36,7 +36,7 @@ export default function HomeScreen() {
 
       {/* Bottom Bar */}
       <View style={styles.bottomBarWrapper}>
-        <BottomBar />
+        <BottomBar currentScreen = "Home"/>
       </View>
     </View>
   );
