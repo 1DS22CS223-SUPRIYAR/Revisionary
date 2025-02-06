@@ -87,7 +87,11 @@ const SummaryPage = () => {
         <View style={styles.summaryHeader}>
           <View style={styles.summaryIcons}>
             <TouchableOpacity onPress={readAloud}>
-              <Icon name={isSpeaking ? "volume-off" : "volume-high"} size={24} color="#6849EF" />
+              <Icon
+              name="volume-high" // Keep one icon
+              size={24}
+              color={isSpeaking ? "#6849EF": "#818C78"} // Change color based on state
+            />
             </TouchableOpacity>
             <TouchableOpacity style={styles.starIcon}>
               <Icon name="star-outline" size={24} color="#6849EF" />
