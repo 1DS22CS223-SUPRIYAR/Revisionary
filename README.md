@@ -1,7 +1,4 @@
 
-
----
-
 # **Revisionary App - AI-Powered Flashcards and Quiz Generator**  
 
 Revisionary is an educational app that uses AI to generate **flashcards, quizzes, and summaries** based on YouTube video content. It provides a seamless learning experience by integrating various APIs and services, including YouTube transcript extraction, Google Gemini AI for summarization, and MongoDB for storing data.
@@ -208,10 +205,6 @@ This project was made possible by:
 
 ## **Future Enhancements**  
 
-✅ **Add Flashcards Generation Support**  
+✅ **Add Flashcards Generation Support** (currently commented out)  
 ✅ **Improve UI/UX for Quiz & Flashcards Display**  
 ✅ **Add User Authentication for Saved Data**  
-
-
----
-
