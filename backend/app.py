@@ -73,7 +73,7 @@ def generate_summary(transcript):
         model = genai.GenerativeModel("gemini-2.0-flash-exp")
         response1 = model.generate_content([
             {"text": f"Translate the text to English if it is not already in English. "
-                         f"Is this strictly about social science,history, politics, geography,,Literary analysis, Poetry, Novels, plays, essays, Linguistics, Writing styles or English Literature?? Reply '1' for yes, '0' for no. Just reply in one number"
+                         f"Is this strictly about social science,history, politics, geography,Literary analysis, Poetry, Novels, plays, essays, Linguistics, Writing styles?? Reply '1' for yes, '0' for no. Just reply in one number"
                          f"Here is the text:\n{transcript}\n"}
         ])
 
@@ -82,7 +82,7 @@ def generate_summary(transcript):
 
         soc = response1.text.strip()
         if soc not in ["0", "1"]:
-            return None, f"Unexpected response: {soc}"
+            return None, f"Unexpected response: Unrelated video"
 
         if soc == "1":
             response2 = model.generate_content([
